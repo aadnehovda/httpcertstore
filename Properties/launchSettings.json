@@ -1,13 +1,13 @@
 {
-	"$schema": "https://json.schemastore.org/launchsettings.json",
-	"profiles": {
-		"CaddyWindowsCertificateManager": {
-			"commandName": "Project",
-			"environmentVariables": {
-				"ASPNETCORE_ENVIRONMENT": "Development"
-			},
-			"useSSL": false,
-			"applicationUrl": "http://127.0.0.1:27510"
-		}
-	}
+  "profiles": {
+    "httpcertstore": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "useSSL": false,
+      "applicationUrl": "http://127.0.0.1:27510"
+    }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json"
 }

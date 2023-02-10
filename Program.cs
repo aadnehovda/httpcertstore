@@ -75,6 +75,7 @@ app.MapGet("{location}/{name}/{thumbprint}", (
 		}
 		catch (Exception e)
 		{
+			app.Logger.LogError(e, $"Error while exporting PEM from {cert.SubjectName.Name}");
 			return Results.BadRequest(e.Message);
 		}
 	}
@@ -130,6 +131,7 @@ app.MapGet("{location}/{name:alpha}", (
 		}
 		catch (Exception e)
 		{
+			app.Logger.LogError(e, $"Error while exporting PEM from {pem.SubjectName.Name}");
 			return Results.NotFound(e.Message);
 		}
 

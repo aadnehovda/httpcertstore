@@ -112,8 +112,8 @@ app.MapGet("{location}/{name:alpha}", (
 						Expires = c.NotAfter,
 						Signature = c.SignatureAlgorithm,
 						PublicKeyAlgorithm = c.PublicKey.Oid,
-						SubjectAlternativeName = sans,
-						PrivateKeyExportPolicies = GetExportPolicies(GetPrivateCngKey(c))
+						SubjectAlternativeName = sans
+						//, PrivateKeyExportPolicies = GetExportPolicies(GetPrivateCngKey(c))
 					};
 				});
 		return Results.Ok(descriptions);

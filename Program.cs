@@ -203,32 +203,32 @@ static CngKey? GetPrivateCngKey(X509Certificate2 cert)
 	return default;
 }
 
-static string GetPrivateKey(X509Certificate2 cert, bool makeexportable = false)
+static string GetPrivateKey(X509Certificate2 cert)
 {
 	try
 	{
 		if (cert.GetRSAPrivateKey() is RSACng rsa)
 		{
-			if (makeexportable) MakeExportable(rsa.Key);
-			return rsa.ExportRSAPrivateKeyPem();
+			MakeExportable(rsa.Key);
+			return ExportAndDecryptPrivateKey(rsa).ExportRSAPrivateKeyPem();
 		}
 
 		if (cert.GetDSAPrivateKey() is DSACng dsa)
 		{
-			if (makeexportable) MakeExportable(dsa.Key);
-			return dsa.ExportPkcs8PrivateKeyPem();
+			MakeExportable(dsa.Key);
+			return ExportAndDecryptPrivateKey(dsa).ExportPkcs8PrivateKeyPem();
 		}
 
 		if (cert.GetECDsaPrivateKey() is ECDsaCng ecd)
 		{
-			if (makeexportable) MakeExportable(ecd.Key);
-			return ecd.ExportECPrivateKeyPem();
+			MakeExportable(ecd.Key);
+			return ExportAndDecryptPrivateKey(ecd).ExportECPrivateKeyPem();
 		}
 
 		if (cert.GetECDiffieHellmanPrivateKey() is ECDiffieHellmanCng ecdh)
 		{
-			if (makeexportable) MakeExportable(ecdh.Key);
-			return ecdh.ExportECPrivateKeyPem();
+			MakeExportable(ecdh.Key);
+			return ExportAndDecryptPrivateKey(ecdh).ExportECPrivateKeyPem();
 		}
 	}
 	catch (CryptographicException e)
@@ -239,14 +239,24 @@ static string GetPrivateKey(X509Certificate2 cert, bool makeexportable = false)
 	throw new Exception($"Unable to export private key from certificate {cert.Subject}.");
 }
 
+static T ExportAndDecryptPrivateKey<T>(T alg)
+	where T : AsymmetricAlgorithm, new()
+{
+	var pw = RandomNumberGenerator.GetBytes(20);
+	var bytes = alg.ExportEncryptedPkcs8PrivateKey(pw, new PbeParameters(PbeEncryptionAlgorithm.Aes256Cbc, HashAlgorithmName.SHA384, RandomNumberGenerator.GetInt32(1, 100_000)));
+	var ret = new T();
+	ret.ImportEncryptedPkcs8PrivateKey(pw, bytes, out _);
+	return ret;
+}
+
 static void MakeExportable(CngKey key)
 {
-	if ((key.ExportPolicy & CngExportPolicies.AllowPlaintextExport) == CngExportPolicies.AllowPlaintextExport)
+	if (key.ExportPolicy.HasFlag(CngExportPolicies.AllowExport))
 		return;
 
 	var exportable = new CngProperty(
 		"Export Policy",
-		BitConverter.GetBytes((int)CngExportPolicies.AllowPlaintextExport),
+		BitConverter.GetBytes((int)(CngExportPolicies.AllowExport)),
 		CngPropertyOptions.None);
 
 	key.SetProperty(exportable);
@@ -367,8 +377,6 @@ internal class Signatures : List<Oid>
 
 internal class CipherSuites : List<TlsCipherSuite>
 {
-
-
 	public static bool TryParse(string input, out CipherSuites output)
 	{
 		output = new CipherSuites();

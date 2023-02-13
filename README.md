@@ -31,6 +31,11 @@ http://127.0.0.1:27510/LocalMachine/My?server_name=test.local.gd and this progra
 look up a mathing, valid certificate and respond with a complete PEM encoded chain
 including the private key. 
 
+*IMPORTANT: When adding a certificate with a private key to the certificate store you must
+mark it as exportable, otherwise this program will not be able to extract the private key*
+
+![image](https://user-images.githubusercontent.com/1244723/218490906-cf10a4c3-33d1-4ecb-b9d3-5d0ebf4407a7.png)
+
 https://caddyserver.com/docs/caddyfile/directives/tls#http
 
 TODO: validate the signature schemes and ciphers when looking for a supported certificate.

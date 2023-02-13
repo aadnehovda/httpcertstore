@@ -111,7 +111,7 @@ BmcCG+XliIl2oSR4AMCH0NYbtVtu/Ne8ZZDBUbz5B/MRgHQWHkhIXXc1Np2kd6q6
   V3
 
 [Subject]
-  OU=SVG\ahovda@DESKTOP-RPO0SR5 (ahovda), O=mkcert development certificate
+  CN=mkcert ahovda, OU=ahovda, O=mkcert development CA
   Simple Name: ahovda
   DNS Name: *.local.gd
 

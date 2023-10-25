@@ -28,7 +28,7 @@ find a matching certificate:
 
 So whenever you browse to https://test.local.gd, Caddy will send a request to 
 http://127.0.0.1:27510/LocalMachine/My?server_name=test.local.gd and this program will 
-look up a mathing, valid certificate and respond with a complete PEM encoded chain
+look up a matching, valid certificate and respond with a complete PEM encoded chain
 including the private key. 
 
 *IMPORTANT: When adding a certificate with a private key to the certificate store you must

@@ -8,7 +8,7 @@ that gets certificates and keys out of the Windows Certificate Store.
 Download a Windows x64 package from [Releases](https://github.com/aadnehovda/httpcertstore/releases/latest):
 
 - **Self-contained:** includes the runtime; no installation required.
-- **Framework-dependent:** requires both the Windows x64 [.NET Runtime and ASP.NET Core Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), version 10.0.14 or a newer 10.0 patch.
+- **Framework-dependent:** install the [.NET 10 Hosting Bundle](https://aka.ms/dotnet/10.0/dotnet-hosting-win.exe) (10.0.14 or newer).
 
 To build both packages, install .NET SDK 10.0.403 or a newer stable 10.0 SDK and
 run `./scripts/Publish-Windows.ps1`. Output is written to `artifacts/`.

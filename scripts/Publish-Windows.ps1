@@ -32,7 +32,8 @@ try {
             if ($LASTEXITCODE -ne 0) { throw 'Could not locate the generated runtime configuration.' }
             $config = Get-Content -LiteralPath $runtimeConfigPath -Raw | ConvertFrom-Json
             $frameworks = @($config.runtimeOptions.frameworks)
-            $baseline = ([xml](Get-Content -LiteralPath 'httpcertstore.csproj')).Project.PropertyGroup.RuntimeFrameworkVersion
+            $profilePath = Join-Path 'Properties/PublishProfiles' ($variant.Profile + '.pubxml')
+            $baseline = ([xml](Get-Content -LiteralPath $profilePath)).Project.PropertyGroup.RuntimeFrameworkVersion
             if ($config.runtimeOptions.rollForward -ne 'LatestPatch' -or
                 $frameworks.Count -ne 2 -or
                 @($frameworks | Where-Object { $_.version -ne $baseline }).Count -ne 0 -or

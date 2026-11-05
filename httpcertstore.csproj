@@ -5,8 +5,6 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Version>0.2.0</Version>
-		<!-- Minimum security baseline; update when servicing .NET 10. -->
-		<RuntimeFrameworkVersion>10.0.14</RuntimeFrameworkVersion>
 		<RollForward>LatestPatch</RollForward>
 		<DefaultItemExcludes>$(DefaultItemExcludes);artifacts\**</DefaultItemExcludes>
 		<EnableDefaultContentItems>false</EnableDefaultContentItems>

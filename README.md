@@ -3,70 +3,19 @@
 This is a simple implementation of a Caddy compatible certificate manager 
 that gets certificates and keys out of the Windows Certificate Store.
 
-## Windows packages and .NET support
+## Windows packages
 
-Version **0.2.0** updates the published application's runtime and adds a
-framework-dependent single-executable package. Application code is unchanged
-from v0.1.0, including the 404 response when no certificate matches a hostname.
+Download a Windows x64 package from [Releases](https://github.com/aadnehovda/httpcertstore/releases/latest):
 
-The application targets .NET 10 LTS. The build uses SDK 10.0.403 (or a newer
-patch in the same SDK feature band) and requires runtime 10.0.14 or later in
-the 10.0 series. This baseline includes Microsoft's October 25, 2026 security
-updates. .NET 7 is out of support; .NET 8 and 9 reach end of support on
-November 10, 2026, while .NET 10 is supported through November 2028.
-See the [.NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core)
-and [security update details](https://devblogs.microsoft.com/dotnet/dotnet-october-2026-oob-security-updates/).
+- **Self-contained:** includes the runtime; no installation required.
+- **Framework-dependent:** requires both the Windows x64 [.NET Runtime and ASP.NET Core Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), version 10.0.14 or a newer 10.0 patch.
 
-Build both Windows x64 packages from the repository root:
+To build both packages, install .NET SDK 10.0.403 or a newer stable 10.0 SDK and
+run `./scripts/Publish-Windows.ps1`. Output is written to `artifacts/`.
 
-```powershell
-./scripts/Publish-Windows.ps1
-./scripts/Test-WindowsPackages.ps1
-```
+## Usage
 
-The ZIP files and their SHA-256 checksums are written to `artifacts/`:
-
-| Package | Deployment |
-| --- | --- |
-| `httpcertstore-0.2.0-win-x64-self-contained.zip` | One executable containing the application and .NET/ASP.NET Core runtime. No separately installed .NET runtime is required. |
-| `httpcertstore-0.2.0-win-x64-framework-dependent.zip` | One executable containing the application and dependency metadata, without the runtime. Install the Windows x64 **ASP.NET Core Runtime 10.0.14 or newer 10.0 patch** first; the base .NET Runtime alone is insufficient. |
-
-Extract either package into its own directory and run `httpcertstore.exe` from
-that directory. Both packages include editable `appsettings.json`, this README,
-and the license. Both executables also work without sidecar files using
-default configuration, subject to the runtime requirement above. For the
-self-contained executable, native runtime libraries extract under the running
-account's `%TEMP%/.net` directory on first launch. Trimming is disabled to retain
-reflection-based JSON serialization and endpoint binding.
-
-The framework-dependent package selects the latest installed 10.0 patch and
-refuses versions older than the baseline. Patch its host's ASP.NET Core runtime
-and restart the application. For the self-contained package, rebuild and
-redeploy after updating `RuntimeFrameworkVersion` in `httpcertstore.csproj`;
-installing a newer runtime on the host does not patch the embedded runtime.
-Keep `global.json` updated with a supported SDK as well.
-
-Packaging validates the runtime requirements before bundling. The smoke test
-verifies ZIP checksums and executable versions, then runs each executable alone
-to check startup, loopback binding, certificate listing, and 404 responses for
-missing certificates and unmatched hostnames. It requires
-port 27510 to be free and stops only the processes it starts. It does not export
-private keys or modify certificate stores.
-
-The checked-in `WindowsSelfContained` and `WindowsFrameworkDependent` publish
-profiles can also be used directly:
-
-```powershell
-dotnet publish -c Release -p:PublishProfile=WindowsSelfContained
-dotnet publish -c Release -p:PublishProfile=WindowsFrameworkDependent
-```
-
-Use these instead of older local publish profiles
-that may still target .NET 7. GitHub Actions builds both ZIPs on pushes, pull
-requests, and manual runs. Packages include only the explicitly listed application
-files; development settings and local certificate/key files are not packaged.
-
-Run the program and configure Caddy like this: 
+Extract the package, run `httpcertstore.exe`, and configure Caddy like this:
 
 ```
 {

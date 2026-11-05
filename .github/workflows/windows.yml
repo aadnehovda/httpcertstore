@@ -1,0 +1,31 @@
+name: Windows packages
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+      - name: Publish Windows packages
+        shell: pwsh
+        run: ./scripts/Publish-Windows.ps1
+      - name: Smoke test Windows packages
+        shell: pwsh
+        run: ./scripts/Test-WindowsPackages.ps1
+      - uses: actions/upload-artifact@v7
+        with:
+          name: httpcertstore-windows-x64
+          path: |
+            artifacts/*.zip
+            artifacts/*.sha256
+          if-no-files-found: error
